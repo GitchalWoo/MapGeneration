@@ -36,7 +36,7 @@ public class MapGenerator : MonoBehaviour
     public TerrainType[] regions;
 
     ConcurrentQueue<MapThreadInfo<MapData>> mapDataThreadInfoQueue = new ConcurrentQueue<MapThreadInfo<MapData>>();
-
+    ConcurrentQueue<MapThreadInfo<MeshData>> meshDataThreadInfoQueue = new ConcurrentQueue<MapThreadInfo<MeshData>>();
     public void DrawMapInEditor() {
         MapData mapData = GenerateMapData();
 
@@ -69,10 +69,28 @@ public class MapGenerator : MonoBehaviour
         mapDataThreadInfoQueue.Enqueue(new MapThreadInfo<MapData>(callback, mapData));
     }
 
+    public void RequestMeshData(MapData mapData, Action<MeshData> callback) {
+        ThreadStart threadStart = delegate {
+            MeshDataThread(mapData, callback);
+        };
+
+        new Thread(threadStart).Start();
+    }
+
+    void MeshDataThread(MapData mapData, Action<MeshData> callback) {
+        MeshData meshData = GenerateMesh.GenerateTerrainMesh(mapData.heightMap, meshHightMultiplier, meshHightCurve, levelOfDetail);
+        meshDataThreadInfoQueue.Enqueue(new MapThreadInfo<MeshData>(callback, meshData));
+    }
+
     void Update() {
-        MapThreadInfo<MapData> item;
-        while(mapDataThreadInfoQueue.TryDequeue(out item)) {
-            item.callback(item.parameter);
+        MapThreadInfo<MapData> mapDataThreadInfo;
+        while(mapDataThreadInfoQueue.TryDequeue(out mapDataThreadInfo)) {
+            mapDataThreadInfo.callback(mapDataThreadInfo.parameter);
+        }
+
+        MapThreadInfo<MeshData> meshDataThreadInfo;
+        while(meshDataThreadInfoQueue.TryDequeue(out meshDataThreadInfo)) {
+            meshDataThreadInfo.callback(meshDataThreadInfo.parameter);
         }
     }
 
