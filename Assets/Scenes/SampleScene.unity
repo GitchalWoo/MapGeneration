@@ -359,13 +359,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   detailLevels:
   - lod: 0
-    visibleDistanceTreshold: 200
+    visibleDistanceTreshold: 100
+    useForCollider: 0
+  - lod: 1
+    visibleDistanceTreshold: 250
+    useForCollider: 1
   - lod: 4
     visibleDistanceTreshold: 400
-  - lod: 6
-    visibleDistanceTreshold: 600
+    useForCollider: 0
   - lod: 8
     visibleDistanceTreshold: 800
+    useForCollider: 0
   viewer: {fileID: 1080523448}
   mapMaterial: {fileID: 2100000, guid: f7dc090600687274abbbc5b78ada77eb, type: 2}
 --- !u!1 &519420028
