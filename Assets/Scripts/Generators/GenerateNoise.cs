@@ -10,6 +10,8 @@ public static class GenerateNoise
         Local, Global
     };
 
+    const float NormalizedHeightCompensationFactor = 2.5f;
+
     public static float[,] GenerateNoiseMap(
         int mapWidth,
         int mapHeight,
@@ -94,7 +96,7 @@ public static class GenerateNoise
                 }
                 else if (normalizeMode == NormalizeMode.Global)
                 {
-                    float normalizedHeight = (noiseMap[x, y] + 1) / (2f * maxPossibleHeight);
+                    float normalizedHeight = (noiseMap[x, y] + 1) / (2f * maxPossibleHeight / NormalizedHeightCompensationFactor);
                     noiseMap[x, y] = normalizedHeight;
                 }
                 else
