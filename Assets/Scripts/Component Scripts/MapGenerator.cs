@@ -16,7 +16,9 @@ public class MapGenerator : MonoBehaviour
 
     public GenerateNoise.NormalizeMode normalizeMode;
 
-    public const int mapChunkSize = 239;
+  
+    public bool useFlatShading;
+    
     [Range(0, 6)]
     public int editorLevelOfDetail;
     public float noiseScale;
@@ -39,6 +41,22 @@ public class MapGenerator : MonoBehaviour
 
     ConcurrentQueue<MapThreadInfo<MapData>> mapDataThreadInfoQueue = new ConcurrentQueue<MapThreadInfo<MapData>>();
     ConcurrentQueue<MapThreadInfo<MeshData>> meshDataThreadInfoQueue = new ConcurrentQueue<MapThreadInfo<MeshData>>();
+
+    static MapGenerator instance;
+
+    public static int mapChunkSize {
+        get {
+            if(instance == null) {
+                instance = FindObjectOfType<MapGenerator>();
+            }
+            if(instance.useFlatShading) {
+                return 95;
+            } else {
+                return 239;
+            }
+        }
+    }
+
     public void DrawMapInEditor()
     {
         MapData mapData = GenerateMapData(Vector2.zero);
@@ -54,7 +72,7 @@ public class MapGenerator : MonoBehaviour
         }
         else if (drawMode == DrawMode.Mesh)
         {
-            display.DrawMesh(GenerateMesh.GenerateTerrainMesh(mapData.heightMap, meshHightMultiplier, meshHightCurve, editorLevelOfDetail), GenerateTexture.TextureFromColorMap(mapData.colorMap, mapChunkSize, mapChunkSize));
+            display.DrawMesh(GenerateMesh.GenerateTerrainMesh(mapData.heightMap, meshHightMultiplier, meshHightCurve, editorLevelOfDetail, useFlatShading), GenerateTexture.TextureFromColorMap(mapData.colorMap, mapChunkSize, mapChunkSize));
         }
     }
 
@@ -87,7 +105,7 @@ public class MapGenerator : MonoBehaviour
 
     void MeshDataThread(MapData mapData, int lod, Action<MeshData> callback)
     {
-        MeshData meshData = GenerateMesh.GenerateTerrainMesh(mapData.heightMap, meshHightMultiplier, meshHightCurve, lod);
+        MeshData meshData = GenerateMesh.GenerateTerrainMesh(mapData.heightMap, meshHightMultiplier, meshHightCurve, lod, useFlatShading);
         meshDataThreadInfoQueue.Enqueue(new MapThreadInfo<MeshData>(callback, meshData));
     }
 
