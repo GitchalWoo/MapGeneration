@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Movement : MonoBehaviour
 {
-    public float speed = 12f;
+    public float speed;
     public float gravity = -9.81f;
 
     public float jumpHeight = 3f;
