@@ -69,15 +69,18 @@ public class EndlessTerrain : MonoBehaviour
                 else
                 {
                     terrainChunkDictionary.Add(viewedChunkCoord, new TerrainChunk(viewedChunkCoord, chunkSize, detailLevels, transform, mapMaterial));
+                    terrainChunksVisibleLastUpdate.Add(terrainChunkDictionary[viewedChunkCoord]);
                 }
 
             }
 
         }
+
     }
 
     public class TerrainChunk
     {
+
         GameObject meshObject;
         Vector2 position;
         Bounds bounds;
